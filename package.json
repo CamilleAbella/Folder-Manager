@@ -24,6 +24,6 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "This folder manager serves, as the name implies, to read, write, list, transform, clone, filter and display the contents of folders. All his methods are synchronous."
+    "url": "https://github.com/CamilleAbella/Folder-Manager"
   }
 }
