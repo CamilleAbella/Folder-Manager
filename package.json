@@ -1,0 +1,29 @@
+{
+  "name": "folder-manager",
+  "version": "1.0.0",
+  "description": "File manager",
+  "main": "fm.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "fs",
+    "file-manager",
+    "file",
+    "manager",
+    "copy-folder",
+    "file-processing",
+    "tree",
+    "tree-view"
+  ],
+  "author": "ghom",
+  "license": "ISC",
+  "dependencies": {
+    "progress": "^2.0.3"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "This folder manager serves, as the name implies, to read, write, list, transform, clone, filter and display the contents of folders. All his methods are synchronous."
+  }
+}
