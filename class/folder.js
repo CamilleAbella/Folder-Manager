@@ -1,5 +1,6 @@
 
 const fs = require('fs')
+const chalk = require('chalk');
 const ProgressBar = require('progress')
 const data = require(__dirname+'/../data.js')
 const File = require(__dirname+"/file.js")
@@ -11,20 +12,24 @@ module.exports = class Folder{
 	get path(){
 		return this._path
 	}
-	get fullname(){
-		return this._name
-	}
 	get name(){
-		return this._name
+		return this.fullname.replace("."+this.ext,"")
+	}
+	get fullname(){
+		return this.path.split(/\/|\\/g).pop()
+	}
+	get ext(){
+		let ext = ""
+		if(this.fullname.includes(".")){
+			ext = this.fullname.slice(this.fullname.lastIndexOf(".")+1)
+		}
+		return ext.toLowerCase()
 	}
 	get type(){
 		return this._type
 	}
 	set name(name){
-		let splitpath = this._path.split(/\/|\\/g)
-		let basepath = splitpath.slice(0,splitpath.length-1).join("/")
-		this._path = basepath+"/"+name
-		this._name = name
+		throw data.errors.nomodif("name")
 	}
 	set path(nil){
 		throw data.errors.nomodif("path")
@@ -120,7 +125,7 @@ module.exports = class Folder{
 			content : this.content,
 			type : this._type,
 			path : this._path,
-			name : this._name
+			name : this.name
 		};
 	}
 	toArray(){
@@ -137,7 +142,11 @@ module.exports = class Folder{
 		}else{
 			tab += "╚═"
 		}
-		return [tab+"╦═[ "+this.fullname+" ]"].concat(this.content.sort(function(item){
+		let ftab = "═"
+		if(this.content.length>0){
+			ftab = "╦"
+		}
+		return [tab+ftab+"[ "+chalk.bold(this.fullname)+" ]"].concat(this.content.sort(function(item){
 			return item.type === "folder" ? 1 : -1
 		}).map(function(item,i,arr){
 			if(i<arr.length-1){
@@ -160,7 +169,7 @@ module.exports = class Folder{
 		})
 		let bar;
 		if(!next){
-			bar = new ProgressBar('[:bar] :percent read from '+path, { 
+			bar = new ProgressBar('[:bar] :percent was read from '+path, { 
 				total: dirents.length,
 				complete: '═',
 				incomplete: ' ',
@@ -169,8 +178,7 @@ module.exports = class Folder{
 		}
 		this._type = 'folder'
 		this._path = path
-		this._name = path.split(/\/|\\/g).pop()
-		this.content = Object.freeze(dirents.map(function(dirent){
+		this.content = dirents.map(function(dirent){
 			if(!next) bar.tick();
 			if(dirent.isFile()){
 				let ext = dirent.name.slice(dirent.name.lastIndexOf(".")+1)
@@ -192,7 +200,7 @@ module.exports = class Folder{
 				}
 				return false
 			}
-		}).filter(item=>item!==false))
+		}).filter(item=>item!==false)
 		return this
 	}
 	write(path,next){
@@ -206,7 +214,7 @@ module.exports = class Folder{
 		let folder = this
 		let bar;
 		if(!next){
-			bar = new ProgressBar('[:bar] :percent write to '+path, { 
+			bar = new ProgressBar('[:bar] :percent was written to '+path, { 
 				total: folder.content.length,
 				complete: '═',
 				incomplete: ' ',

@@ -1,7 +1,7 @@
 {
   "name": "folder-manager",
-  "version": "1.0.0",
-  "description": "File manager",
+  "version": "1.0.2",
+  "description": "This folder manager serves, as the name implies, to read, write, list, transform, clone, filter and display the contents of folders. All his methods are synchronous.",
   "main": "fm.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,11 +19,16 @@
   "author": "ghom",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^2.4.2",
     "progress": "^2.0.3"
   },
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/CamilleAbella/Folder-Manager"
-  }
+    "url": "git+https://github.com/CamilleAbella/Folder-Manager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CamilleAbella/Folder-Manager/issues"
+  },
+  "homepage": "https://github.com/CamilleAbella/Folder-Manager#readme"
 }

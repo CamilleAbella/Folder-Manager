@@ -1,5 +1,6 @@
 
 const fs = require('fs')
+const chalk = require('chalk');
 const data = require('../data.js')
 
 module.exports = class File{
@@ -10,22 +11,23 @@ module.exports = class File{
 		return this._path
 	}
 	get name(){
-		return this._name
+		return this.fullname.replace("."+this.ext,"")
 	}
 	get fullname(){
-		return this._fullname
+		return this.path.split(/\/|\\/g).pop()
 	}
 	get ext(){
-		return this._ext
+		let ext = ""
+		if(this.fullname.includes(".")){
+			ext = this.fullname.slice(this.fullname.lastIndexOf(".")+1)
+		}
+		return ext.toLowerCase()
 	}
 	get type(){
 		return this._type
 	}
 	set name(name){
-		let splitpath = this._path.split(/\/|\\/g)
-		let basepath = splitpath.slice(0,splitpath.length-1).join("/")
-		this._path = basepath+"/"+name
-		this._name = name
+		throw data.errors.nomodif("name")
 	}
 	set path(nil){
 		throw data.errors.nomodif("path")
@@ -44,15 +46,28 @@ module.exports = class File{
 	}
 	toJSON(simplify){
 		return simplify ? this.simplify() : {
-			fullname : this._fullname,
+			fullname : this.fullname,
 			content : this.content,
 			type : this._type,
 			path : this._path,
-			name : this._name,
-			ext : this._ext
+			name : this.name,
+			ext : this.ext
 		};
 	}
 	toString(tab,middle){
+		let fullname = this.fullname
+		if(this.ext==="js"){
+			fullname = chalk.yellow(fullname)
+		}
+		if(this.ext==="rb"){
+			fullname = chalk.red(fullname)
+		}
+		if(this.ext==="json"){
+			fullname = chalk.grey(fullname)
+		}
+		if(this.ext==="md"){
+			fullname = chalk.blue(fullname)
+		}
 		if(!tab) tab = "  ";
 		tab = tab.replace(/(╠═|╚═)/g,"  ")
 		if(middle){
@@ -60,7 +75,7 @@ module.exports = class File{
 		}else{
 			tab += "╚═"
 		}
-		return tab+" "+this.fullname
+		return tab+" "+fullname
 	}
 	read(path,encoding){
 		if(!data.encoding.includes(encoding)){
@@ -68,20 +83,12 @@ module.exports = class File{
 		}
 		this._type = 'file'
 		this._path = path
-		this._fullname = path.split(/\/|\\/g).pop()
-		if(this._fullname.includes(".")){
-			this._ext = this._fullname.slice(this._fullname.lastIndexOf(".")+1)
-		}else{
-			this._ext = ""
-		}
-		this._name = this._fullname.replace("."+this._ext,"")
-		if(data.banned_ext.includes(this._ext)){
+		if(data.banned_ext.includes(this.ext)){
 			this.content = "illegal content ⛔"
 			this._type = 'unread file'
 			return this
 		}
-		if(this._ext)
-		this.content = Object.freeze(fs.readFileSync(path,encoding))
+		this.content = fs.readFileSync(path,encoding)
 		return this
 	}
 	write(path){
